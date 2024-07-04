@@ -1,5 +1,5 @@
-// import React from 'react';
 import { Container } from '@mui/material';
+
 import { Routes, Route, Link } from 'react-router-dom';
 import MainContentSection from './Maincontent';
 import Adminpage from './Adminpage';
@@ -13,7 +13,7 @@ const App = () => {
           <Route path="/" element={<MainContentSection />} />
           <Route path="/Adminpage" element={<Adminpage />} />
           <Route path="/Loginpage" element={<LoginPage />} />
-        </Routes>     
+      </Routes>     
     </div>
   );
 };
