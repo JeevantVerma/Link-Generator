@@ -1,7 +1,11 @@
 // import React from 'react';
 import { Container } from '@mui/material';
+import { Routes, Route, Link } from 'react-router-dom';
 import MainContentSection from './Maincontent';
-import "./App.css"
+import LoginPageSection from './loginPage';
+import ErrorPageSection from './errorPage';
+import "./App.css";
+
 const App = () => {
   return (
     <div className='app'>
@@ -18,8 +22,13 @@ const App = () => {
         }
       }}
     >
-      <MainContentSection />
+      <Routes>
+        <Route path="/" element={<LoginPageSection />} />
+        <Route path="/link-gen" element={<MainContentSection />} />
+        <Route path="/error" element={<ErrorPageSection />} />
+      </Routes>
     </Container>
+      
     </div>
   );
 };
