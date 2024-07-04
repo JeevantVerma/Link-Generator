@@ -1,19 +1,16 @@
-// /*
-// import React from "react";
 import { useState } from "react";
 import {
   TextField,
+  Container,
   Button,
   Grid,
-  // createTheme,
-  // ThemeProvider,
   Typography,
-  // Box,
   Snackbar,
   MenuItem,
   FormControl,
   InputLabel,
   Select,
+  Switch,
 } from "@mui/material";
 import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -22,6 +19,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import LaunchIcon from "@mui/icons-material/Launch";
 import axios from "axios";
+import QRcode from "qrcode";
 
 // const darkTheme = createTheme({
 //   palette: {
@@ -38,40 +36,9 @@ const MainContentSection = () => {
   const [noExpiry, setNoExpiry] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [error, setError] = useState("");
+  const [toggle,settoggle] = useState(1);
+  const [qrimage, setqrimage] = useState("");
 
-  const loginUser = async () => {
-    const config = {
-      method: 'GET',
-      maxBodyLength: Infinity,
-      url: 'http://localhost:4000/login',
-      params: {
-        username: "Preet",
-        password: "12345",
-      },
-      withCredentials: true
-    };
-  
-    try {
-      const response = await axios.request(config);
-  
-      if (response.status === 200) {
-        console.log('Login success');
-        const redirectUrl = response.data.redirectUrl;
-        if (redirectUrl) {
-          console.log('redirect');
-          // window.location.href = redirectUrl;
-        } else {
-          console.log('No redirect URL provided by the backend');
-        }
-      } else {
-        console.log('Login failed');
-      }
-    } catch (error) {
-      console.error('Error during login:', error.message);
-      console.error('Full error:', error);
-    }
-  };
-  
   const handleShortenUrl = async () => {
     const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
     if (!urlRegex.test(longUrl)) {
@@ -164,7 +131,24 @@ const MainContentSection = () => {
     }
   };
 
+  const generateQRcode =()=>{
+      QRcode.toDataURL(shortenedUrl).then(setqrimage)
+    }
+
   return (
+    <Container
+      maxWidth="md" 
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '89vh',
+        width: {
+          xs: '100%',
+          md: '50vw',
+        }
+      }}
+    >
     <Grid
       container
       spacing={2}
@@ -200,7 +184,7 @@ const MainContentSection = () => {
           <DatePicker
             format="DD/MM/YYYY"
             label="Set Expiry Date"
-            value={expiry}
+            value={noExpiry ? null : expiry}
             fullWidth
             minDate={dayjs().startOf('day')}
             disabled={(noExpiry)}
@@ -234,22 +218,31 @@ const MainContentSection = () => {
         </FormControl>
       </Grid>
       <Grid item xs={12} sm={4}>
-        <Button 
+        <Switch 
           variant="contained" 
           color="primary" 
-          onClick={() => setNoExpiry(!noExpiry)}
+          onChange={() => { 
+            settoggle(toggle => toggle+1)
+            if (toggle%2 === 0) {
+              setNoExpiry(false);
+            }else{setNoExpiry(true)}
+            //setNoExpiry(true);
+            //setExpiry(dayjs().add(100, "year"));
+          }
+        }
         >
           {noExpiry ? "Clear No Expiry" : "No Expiry"}
-        </Button>
+        </Switch>
+        <Typography 
+        variant="p1"
+        align="center"
+        >
+          No Expiry
+        </Typography>
       </Grid>
       <Grid item xs={12}>
         <Button variant="contained" color="primary" onClick={handleShortenUrl}>
           Shorten URL
-        </Button>
-      </Grid>
-      <Grid item xs={12}>
-        <Button variant="contained" color="primary" onClick={loginUser}>
-          Register
         </Button>
       </Grid>
       {shortenedUrl && (
@@ -274,6 +267,17 @@ const MainContentSection = () => {
           >
             <ContentCopyIcon />
           </Button>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={generateQRcode}
+            sx={{ marginLeft: 2 }}
+          >
+            QR Code
+            </Button>
+            <Grid>
+               <img src={qrimage}/>
+            </Grid>
         </Grid>
       )}
       
@@ -284,6 +288,7 @@ const MainContentSection = () => {
         message="Successfully copied Link"
       />
     </Grid>
+    </Container>
   );
 };
 
