@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
   Grid,
+  Container,
   Typography,
   TextField,
   Button,
@@ -26,6 +27,19 @@ const LoginPage = () => {
   };
 
   return (
+    <Container
+      maxWidth="md" 
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '89vh',
+        width: {
+          xs: '100%',
+          md: '50vw',
+        }
+      }}
+    >
     <Grid
       container
       spacing={2}
@@ -33,7 +47,7 @@ const LoginPage = () => {
       justifyContent="center"
       sx={{ backgroundColor: "#eaeff1", padding: { xs: 3.8, md: 5 }, borderRadius: 10 }}
     >
-      <Typography variant="h4" align="center">Login using Username</Typography>
+      <Typography variant="h4" align="center">Login</Typography>
 
       <Grid item xs={12} sx={{ pt: { xs: 32, md: 16 }, pl: 16 }}>
         <TextField
@@ -71,6 +85,7 @@ const LoginPage = () => {
       </Button>
       </Grid>
     </Grid>
+    </Container>
   );
 };
 
