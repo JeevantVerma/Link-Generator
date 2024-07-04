@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-
+	auth "github.com/MicrosoftStudentChapter/Link-Generator/pkg/auth"
 	router "github.com/MicrosoftStudentChapter/Link-Generator/pkg/router"
 	"github.com/gorilla/mux"
 	"github.com/redis/go-redis/v9"
