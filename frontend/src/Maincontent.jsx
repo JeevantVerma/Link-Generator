@@ -38,6 +38,39 @@ const MainContentSection = () => {
   const [noExpiry, setNoExpiry] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [error, setError] = useState("");
+
+  const loginUser = async () => {
+    const config = {
+      method: 'GET',
+      maxBodyLength: Infinity,
+      url: 'http://localhost:4000/login',
+      params: {
+        username: "Preet",
+        password: "12345",
+      },
+      withCredentials: true
+    };
+  
+    try {
+      const response = await axios.request(config);
+  
+      if (response.status === 200) {
+        console.log('Login success');
+        const redirectUrl = response.data.redirectUrl;
+        if (redirectUrl) {
+          console.log('redirect');
+          // window.location.href = redirectUrl;
+        } else {
+          console.log('No redirect URL provided by the backend');
+        }
+      } else {
+        console.log('Login failed');
+      }
+    } catch (error) {
+      console.error('Error during login:', error.message);
+      console.error('Full error:', error);
+    }
+  };
   
   const handleShortenUrl = async () => {
     const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
@@ -49,7 +82,7 @@ const MainContentSection = () => {
 
     const shortenedUrl = generateShortenedUrl(alias);
 
-    const link = "https://l.mlsctiet.com"
+    const link = "https://localhost:4000"
 
     // api call to add link in the backend
     const raw = JSON.stringify({
@@ -212,6 +245,11 @@ const MainContentSection = () => {
       <Grid item xs={12}>
         <Button variant="contained" color="primary" onClick={handleShortenUrl}>
           Shorten URL
+        </Button>
+      </Grid>
+      <Grid item xs={12}>
+        <Button variant="contained" color="primary" onClick={loginUser}>
+          Register
         </Button>
       </Grid>
       {shortenedUrl && (
