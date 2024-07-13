@@ -1,7 +1,6 @@
 package auth
 
 import (
-	// "fmt"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -119,29 +118,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	url := "http://localhost:5173/link-gen"
 	fmt.Printf("Route Url: " + url)
 	json.NewEncoder(w).Encode(Response{Status: "success", RedirectUrl: url})
-}
-
-func Register(w http.ResponseWriter, r *http.Request) {
-	var userData struct {
-		Username string `json:"user"`
-		Password string `json:"pass"`
-	}
-
-	if err := json.NewDecoder(r.Body).Decode(&userData); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	if _, exists := users[userData.Username]; exists {
-		http.Error(w, "User already exists", http.StatusBadRequest)
-		return
-	}
-
-	users[userData.Username] = userData.Password
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{"message": "User registered successfully"})
 }
 
 func GetUsers() []*User {
