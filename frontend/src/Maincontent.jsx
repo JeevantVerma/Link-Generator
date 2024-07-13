@@ -49,7 +49,7 @@ const MainContentSection = () => {
 
     const shortenedUrl = generateShortenedUrl(alias);
 
-    const link = "https://localhost:4000"
+    const link = "http://localhost:4000"
 
     // api call to add link in the backend
     const raw = JSON.stringify({
@@ -57,6 +57,7 @@ const MainContentSection = () => {
       ShortURL: shortenedUrl,
       Expiry: noExpiry ? null : expiry.toISOString(),
     });
+    
     const config = {
       method: "POST",
       maxBodyLength: Infinity,
@@ -66,17 +67,22 @@ const MainContentSection = () => {
         "Access-Control-Allow-Origin":
           "https://generate.mlsctiet.com, http://localhost:5173",
       },
+      // withCredentials: true,
       data: raw,
     };
+    
+    console.log("wommlk");
     const response = await axios.request(config);
+    console.log(response.status);
      // show the response from the backend with this
     if (response.status == 200) {
       console.log(raw);
       setShortenedUrl(`${link}/` + shortenedUrl);
     } else {
+      console.log(raw);
       setShortenedUrl("Error in shortening the URL");
     }
-  };
+  };  
 
   const generateRandomAlias = () => {
     const length = 6;
@@ -293,4 +299,4 @@ const MainContentSection = () => {
 };
 
 export default MainContentSection;
-// */
+// */
