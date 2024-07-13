@@ -10,7 +10,7 @@ import (
 	router "github.com/MicrosoftStudentChapter/Link-Generator/pkg/router"
 	"github.com/gorilla/mux"
 	"github.com/redis/go-redis/v9"
-	"github.com/rs/cors"
+	// "github.com/rs/cors"
 )
 
 func main() {
@@ -50,16 +50,16 @@ func main() {
 	r.Use(HandlePreflight)
 
 	// Configure CORS
-	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:5173"}, // Change this to your front-end URL
-		AllowCredentials: true,
-		AllowedMethods:   []string{"GET", "POST"},
-		AllowedHeaders:   []string{"Authorization"},
-	})
+	// c := cors.New(cors.Options{
+	// 	AllowedOrigins:   []string{"http://localhost:5173"}, // Change this to your front-end URL
+	// 	AllowCredentials: true,
+	// 	AllowedMethods:   []string{"GET", "POST"},
+	// 	AllowedHeaders:   []string{"Authorization"},
+	// })
 
-	handler := c.Handler(r)
+	// handler := c.Handler(r)
 	fmt.Println("Server started at port 4000")
-	http.ListenAndServe(":4000", handler)
+	http.ListenAndServe(":4000", r)
 }
 
 // Middlewares
@@ -67,7 +67,7 @@ func main() {
 func HandlePreflight(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173") // Change this to your frontend URL
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Origin")
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
 
