@@ -6,24 +6,42 @@ import {
   TextField,
   Button,
 } from "@mui/material";
+import axios from "axios";
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("");
+  const [Username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-
-  const handleLogin = () => {
-    // Validate email and password
-    if (!email || !password) {
-      setError("Email and password are required.");
-      return;
+  const handleLogin = async () => {
+    const config = {
+      method: 'GET',
+      maxBodyLength: Infinity,
+      url: 'http://localhost:4000/login',
+      params: {
+        username: Username,
+        password: password,
+      },
+      withCredentials: true
+    };
+  
+    try {
+      const response = await axios.request(config);
+  
+      if (response.status === 200) {
+        console.log('Login success');
+        const redirectUrl = response.data.redirectUrl;
+        if (redirectUrl) {
+          console.log('redirect');
+          window.location.href = redirectUrl;
+        } else {
+          console.log('No redirect URL provided by the backend');
+        }
+      } else {
+        console.log('Login failed');
+      }
+    } catch (error) {
+      console.error('Error during login:', error.message);
+      console.error('Full error:', error);
     }
-
-    // Perform login logic
-    // Assuming API call or further validation
-
-    // Clear error state after successful login
-    setError("");
   };
 
   return (
@@ -51,14 +69,14 @@ const LoginPage = () => {
 
       <Grid item xs={12} sx={{ pt: { xs: 32, md: 16 }, pl: 16 }}>
         <TextField
-          label="Enter your email"
+          label="Enter your Username"
           variant="outlined"
           fullWidth
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={Username}
+          onChange={(e) => setUsername(e.target.value)}
           required
-          error={!!error}
-          helperText={error}
+          // error={!!error}
+          // helperText={error}
         />
       </Grid>
 
@@ -89,4 +107,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default LoginPage;
