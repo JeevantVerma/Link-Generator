@@ -115,7 +115,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	url := "http://localhost:5173/link-gen"
+	url := "http://localhost:5173/AdminPage"
 	fmt.Printf("Route Url: " + url)
 	json.NewEncoder(w).Encode(Response{Status: "success", RedirectUrl: url})
 }

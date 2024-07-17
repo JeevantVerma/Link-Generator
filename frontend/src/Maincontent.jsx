@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import {
   TextField,
   Container,
@@ -38,6 +39,12 @@ const MainContentSection = () => {
   const [error, setError] = useState("");
   const [toggle,settoggle] = useState(1);
   const [qrimage, setqrimage] = useState("");
+
+  const navigate = useNavigate();
+
+  const handleLoginClick = () => {
+    navigate('/LoginPage');
+  };
 
   const handleShortenUrl = async () => {
     const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
@@ -142,6 +149,13 @@ const MainContentSection = () => {
     }
 
   return (
+    <>
+    <Button
+            variant="contained" color="primary"
+            onClick={handleLoginClick}
+    >
+      Admin Login
+    </Button>
     <Container
       maxWidth="md" 
       sx={{
@@ -295,6 +309,7 @@ const MainContentSection = () => {
       />
     </Grid>
     </Container>
+    </>
   );
 };
 

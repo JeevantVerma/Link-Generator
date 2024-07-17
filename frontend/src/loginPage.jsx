@@ -75,8 +75,6 @@ const LoginPage = () => {
           value={Username}
           onChange={(e) => setUsername(e.target.value)}
           required
-          // error={!!error}
-          // helperText={error}
         />
       </Grid>
 
@@ -107,4 +105,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default LoginPage;
