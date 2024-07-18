@@ -11,11 +11,9 @@ const App = () => {
   return (
     <div className='app'>
       <Routes>
-
-          <Route path="/" element={<LoginPage />} />
-          <Route path="/Adminpage" element={<Adminpage />} /> 
-          <Route path="/link-gen" element={<MainContentSection />} />
-
+          <Route path="/" element={<MainContentSection />} />
+          <Route path="/LoginPage" element={<LoginPage />} />
+          <Route path="/Adminpage" element={ <Adminpage />} />
       </Routes>     
     </div>
   );

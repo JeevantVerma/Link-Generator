@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+
+	admin "github.com/MicrosoftStudentChapter/Link-Generator/pkg/admin"
 	auth "github.com/MicrosoftStudentChapter/Link-Generator/pkg/auth"
 	router "github.com/MicrosoftStudentChapter/Link-Generator/pkg/router"
 	"github.com/gorilla/mux"
 	"github.com/redis/go-redis/v9"
-	// "github.com/rs/cors"
 )
 
 func main() {
@@ -32,7 +33,6 @@ func main() {
 
 	r := mux.NewRouter()
 
-	// Define routes
 	r.HandleFunc("/links/all", router.GetAllLinks).Methods(http.MethodOptions, http.MethodGet)
 	r.HandleFunc("/login", auth.Login).Methods(http.MethodOptions, http.MethodGet)
 	r.HandleFunc("/show", auth.ShowUsers).Methods(http.MethodOptions, http.MethodPost)
@@ -41,22 +41,13 @@ func main() {
 		w.Write([]byte("Service is Alive"))
 	}).Methods(http.MethodOptions, http.MethodGet)
 	r.HandleFunc("/add-link", router.AddLink).Methods(http.MethodOptions, http.MethodPost)
+	r.HandleFunc("/add-admin", admin.AddAdmin).Methods(http.MethodOptions, http.MethodPost)
 	r.HandleFunc("/{link}", router.HandleRouting).Methods(http.MethodOptions, http.MethodGet)
 
 	// Middlewares
 	r.Use(LoggingMiddleware)
 	r.Use(mux.CORSMethodMiddleware(r))
 	r.Use(HandlePreflight)
-
-	// Configure CORS
-	// c := cors.New(cors.Options{
-	// 	AllowedOrigins:   []string{"http://localhost:5173"}, // Change this to your front-end URL
-	// 	AllowCredentials: true,
-	// 	AllowedMethods:   []string{"GET", "POST"},
-	// 	AllowedHeaders:   []string{"Authorization"},
-	// })
-
-	// handler := c.Handler(r)
 	fmt.Println("Server started at port 4000")
 	http.ListenAndServe(":4000", r)
 }

@@ -5,14 +5,16 @@ services:
     container_name: link-generator-backend
     build: "."
     restart: always
-    deploy:
-      replicas: 1
     ports:
       - "4000:4000"
     environment:
+      - SQL_USER=${SQL_USER}
+      - SQL_PASSWORD=${SQL_PASSWORD}
+      - SQL_DATABASE_NAME=${SQL_DATABASE_NAME}
       - REDIS_ADDR=redis-server:6379
     depends_on:
       - redis
+      - db
     networks:
       - web
 
@@ -21,18 +23,32 @@ services:
     image: "redis:latest"
     command: ["redis-server", "--appendonly", "yes"]
     restart: always
-    deploy:
-      replicas: 1
-    networks:
-      - web
+    ports:
+      - "6379:6379"
     volumes:
       - redis-data:/data
+    networks:
+      - web
+
+  db:
+    container_name: postgres-db
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: ${SQL_USER}
+      POSTGRES_PASSWORD: ${SQL_PASSWORD}
+      POSTGRES_DB: ${SQL_DATABASE_NAME}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - web
 
 networks:
   web:
-    name: web
     external: true
 
 volumes:
   redis-data:
     name: redis-data
+  pgdata:
+    name: pgdata

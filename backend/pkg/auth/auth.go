@@ -1,6 +1,7 @@
 package auth
 
 import (
+	// "fmt"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -29,7 +30,7 @@ type Response struct {
 }
 
 type Claims struct {
-	Username string "json:username"
+	Username string `json:"username"`
 	jwt.StandardClaims
 }
 

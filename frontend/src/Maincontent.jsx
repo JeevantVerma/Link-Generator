@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import {
   TextField,
   Container,
@@ -20,6 +21,7 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import LaunchIcon from "@mui/icons-material/Launch";
 import axios from "axios";
 import QRcode from "qrcode";
+import { useNavigate } from "react-router-dom";
 
 // const darkTheme = createTheme({
 //   palette: {
@@ -38,6 +40,11 @@ const MainContentSection = () => {
   const [error, setError] = useState("");
   const [toggle,settoggle] = useState(1);
   const [qrimage, setqrimage] = useState("");
+  const navigate = useNavigate();
+
+  const handleLoginClick = () => {
+    navigate('/LoginPage');
+  };
 
   const handleShortenUrl = async () => {
     const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
@@ -51,7 +58,6 @@ const MainContentSection = () => {
 
     const link = "http://localhost:4000"
 
-    // api call to add link in the backend
     const raw = JSON.stringify({
       Link: longUrl,
       ShortURL: shortenedUrl,
@@ -142,6 +148,13 @@ const MainContentSection = () => {
     }
 
   return (
+    <>
+    <Button
+            variant="contained" color="primary"
+            onClick={handleLoginClick}
+    >
+      Admin Login
+    </Button>
     <Container
       maxWidth="md" 
       sx={{
@@ -295,6 +308,7 @@ const MainContentSection = () => {
       />
     </Grid>
     </Container>
+    </>
   );
 };
 
