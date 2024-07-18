@@ -11,8 +11,8 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-
 	_ "github.com/lib/pq"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type admindetail struct {
@@ -61,7 +61,8 @@ func AddAdmin(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	query := `INSERT INTO admin (email, password) VALUES ($1, $2)`
-	_, err = db.ExecContext(ctx, query, req.Email, req.Password)
+	password, _ := bcrypt.GenerateFromPassword([]byte(req.Password), 8)
+	_, err = db.ExecContext(ctx, query, req.Email, password)
 	if err != nil {
 		log.Printf("Error executing query: %v", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
