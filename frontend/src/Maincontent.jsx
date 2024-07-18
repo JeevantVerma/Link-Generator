@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 
 import {
   TextField,
@@ -21,7 +22,6 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import LaunchIcon from "@mui/icons-material/Launch";
 import axios from "axios";
 import QRcode from "qrcode";
-import { useNavigate } from "react-router-dom";
 
 // const darkTheme = createTheme({
 //   palette: {
@@ -40,6 +40,12 @@ const MainContentSection = () => {
   const [error, setError] = useState("");
   const [toggle,settoggle] = useState(1);
   const [qrimage, setqrimage] = useState("");
+  const navigate = useNavigate();
+
+  const handleLoginClick = () => {
+    navigate('/LoginPage');
+  };
+
   const navigate = useNavigate();
 
   const handleLoginClick = () => {
