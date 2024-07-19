@@ -19,7 +19,8 @@ type admindetail struct {
 }
 
 var db *sql.DB
-var conn string
+
+// var conn string
 
 func SetDBConnection(dbSql *sql.DB) {
 	db = dbSql

@@ -10,8 +10,17 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [error, setError] = useState('');
 
   const handleLogin = async (e) => {
+    
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    if (!emailRegex.test(email)) {
+    setError("Invalid email address");
+    return;
+    }
+    setError("");
     
     dispatch(setIsFetching());
     const config = {
@@ -86,6 +95,8 @@ const LoginPage = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            error={!!error}
+            helperText={error}
           />
         </Grid>
 
