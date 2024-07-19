@@ -66,7 +66,7 @@ func GenerateTokenAndSetCookies(w http.ResponseWriter, r *http.Request, email st
 		return ""
 	}
 
-	expirationTime := time.Now().Add(30 * time.Minute)
+	expirationTime := time.Now().Add(24 * time.Hour)
 	claims := &Claims{
 		Email: email,
 		StandardClaims: jwt.StandardClaims{
@@ -147,12 +147,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-<<<<<<< HEAD
 	url := "/Adminpage"
-=======
-
-	url := "/AdminPage"
->>>>>>> 093f9ee2c6b29ffe5eed5fffa8ff6bd8d38c0295
 	fmt.Printf("Route Url: " + url)
 	json.NewEncoder(w).Encode(Response{Status: "success", RedirectUrl: url})
 }

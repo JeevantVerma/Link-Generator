@@ -40,11 +40,6 @@ const MainContentSection = () => {
   const [error, setError] = useState("");
   const [toggle,settoggle] = useState(1);
   const [qrimage, setqrimage] = useState("");
-  const navigate = useNavigate();
-
-  const handleLoginClick = () => {
-    navigate('/LoginPage');
-  };
 
   const navigate = useNavigate();
 
