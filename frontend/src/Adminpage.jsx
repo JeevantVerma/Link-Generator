@@ -1,24 +1,74 @@
 import { useState } from "react";
-
 import {
   Typography,
   Grid,
   Avatar,
   Button,
-  // Link,
+  TextField,
   List,
   ListItem,
   ListItemText,
+  Dialog,DialogActions,DialogContent,DialogContentText,DialogTitle
 } from "@mui/material";
 import Administrators from "./Adminpagecomponents/Administrators";
 import Approvals from "./Adminpagecomponents/Approvals";
+import axios from 'axios';
 import Users from "./Adminpagecomponents/Users";
+import { combineReducers } from "redux";
 
 const Adminpage = () => {
   const [activeComponent, setActiveComponent] = useState("Users");
-
+  const [error, setError] = useState("");
+  const [open, setOpen] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const handleLinkClick = (newComponent) => {
     setActiveComponent(newComponent);
+  };
+  const addAdmin = async () => {
+    
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    if (!emailRegex.test(email)) {
+    setError("Invalid email address");
+    return;
+    }
+    setError("");
+
+    const raw = JSON.stringify({
+      email: email.toLowerCase(),
+      password: password,
+    });
+    const config = {
+      method: "POST",
+      maxBodyLength: Infinity,
+      url: `http://localhost:4000/add-admin`,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin":
+          "https://generate.mlsctiet.com, http://localhost:5173",
+      },
+      data: raw,
+    };
+    const response = await axios.request(config);
+    console.log(response.status);
+     // show the response from the backend with this
+    if (response.status == 200) {
+      console.log(raw);
+      handleClose();
+    } else {
+      console.log(raw);
+      console.log(response.data.message);
+      console.log(error);
+    }
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
   };
 
   return (
@@ -28,9 +78,43 @@ const Adminpage = () => {
           Administrator Panel
         </Typography>
         <Grid>
-          <Button variant="contained" color="primary">
+          <Button variant="contained" color="primary" onClick={handleOpen}>
             Add New Administrator
           </Button>
+          <Dialog open={open} onClose={handleClose}>
+            <DialogTitle>Add New Admin</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                Please enter the email and password of the new admin.
+              </DialogContentText>
+              <TextField
+                autoFocus
+                margin="dense"
+                id="name"
+                label="Email Address"
+                type="email"
+                fullWidth
+                variant="standard"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <TextField
+                autoFocus
+                margin="dense"
+                id="name"
+                label="Password"
+                type="password"
+                fullWidth
+                variant="standard"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Cancel</Button>
+              <Button onClick={addAdmin} >Add</Button>
+            </DialogActions>
+          </Dialog>
         </Grid>
       </Grid>
       <Grid container spacing={2} sx={{ flexGrow: 1 }}>
@@ -82,6 +166,7 @@ const Adminpage = () => {
         </Grid>
       </Grid>
     </Grid>
+
   );
 };
 
