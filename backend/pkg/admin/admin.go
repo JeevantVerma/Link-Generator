@@ -8,9 +8,7 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"os"
 
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -21,27 +19,13 @@ type admindetail struct {
 }
 
 var db *sql.DB
+var conn string
+
+func SetDBConnection(dbSql *sql.DB) {
+	db = dbSql
+}
 
 func AddAdmin(w http.ResponseWriter, r *http.Request) {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
-	connStr := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable",
-		os.Getenv("SQL_USER"),
-		os.Getenv("SQL_PASSWORD"),
-		os.Getenv("SQL_DATABASE_NAME"))
-
-	db, err = sql.Open("postgres", connStr)
-	if err != nil {
-		log.Fatalf("Error opening database: %v", err)
-	}
-
-	err = db.Ping()
-	if err != nil {
-		log.Fatalf("Error connecting to the database: %v", err)
-	}
 	ctx := context.Background()
 	body, err := io.ReadAll(r.Body)
 	if err != nil {

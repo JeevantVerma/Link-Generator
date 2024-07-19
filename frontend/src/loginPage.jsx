@@ -47,6 +47,7 @@ const LoginPage = () => {
       } else {
         dispatch(loginFailure());
         console.log('Login failed');
+        console.log(e);
       }
     } catch (error) {
       dispatch(loginFailure());
