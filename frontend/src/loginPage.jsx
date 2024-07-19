@@ -14,7 +14,6 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     
     dispatch(setIsFetching());
-    console.log("hello")
     const config = {
       method: 'GET',
       maxBodyLength: Infinity,
