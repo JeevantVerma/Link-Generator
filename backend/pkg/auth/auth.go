@@ -147,7 +147,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	url := "http://localhost:5173/Adminpage"
+	url := "/Adminpage"
 	fmt.Printf("Route Url: " + url)
 	json.NewEncoder(w).Encode(Response{Status: "success", RedirectUrl: url})
 }
