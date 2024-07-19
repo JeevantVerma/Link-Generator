@@ -67,6 +67,7 @@ func main() {
 	}).Methods(http.MethodOptions, http.MethodGet)
 	r.HandleFunc("/add-link", router.AddLink).Methods(http.MethodOptions, http.MethodPost)
 	r.HandleFunc("/add-admin", admin.AddAdmin).Methods(http.MethodOptions, http.MethodPost)
+	r.HandleFunc("/get-admin", admin.GetAllAdmins).Methods(http.MethodOptions, http.MethodGet)
 	r.HandleFunc("/{link}", router.HandleRouting).Methods(http.MethodOptions, http.MethodGet)
 
 	// Middlewares

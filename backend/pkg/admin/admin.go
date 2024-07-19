@@ -57,3 +57,40 @@ func AddAdmin(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(req)
 	w.Write([]byte("Admin Added"))
 }
+
+func GetAllAdmins(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Background()
+	query := `SELECT email FROM admin`
+
+	rows, err := db.QueryContext(ctx, query)
+	if err != nil {
+		log.Printf("Error executing query: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	var admins []admindetail
+	for rows.Next() {
+		var admin admindetail
+		if err := rows.Scan(&admin.Email); err != nil {
+			log.Printf("Error scanning row: %v", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+		admins = append(admins, admin)
+	}
+	if err := rows.Err(); err != nil {
+		log.Printf("Error iterating over rows: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(admins); err != nil {
+		log.Printf("Error encoding response: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+}
