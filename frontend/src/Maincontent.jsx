@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
+
 import {
   TextField,
   Container,
@@ -58,7 +59,6 @@ const MainContentSection = () => {
 
     const link = "http://localhost:4000"
 
-    // api call to add link in the backend
     const raw = JSON.stringify({
       Link: longUrl,
       ShortURL: shortenedUrl,
@@ -314,4 +314,3 @@ const MainContentSection = () => {
 };
 
 export default MainContentSection;
-// */

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'; // Import useEffect
+import { useState, useEffect } from 'react'; // Import useEffect
 import { DataGrid } from '@mui/x-data-grid';
 import { Grid, Avatar, Button, Dialog, DialogTitle, DialogContent, DialogActions, IconButton } from '@mui/material';
 import OpenInNewRoundedIcon from '@mui/icons-material/OpenInNewRounded';

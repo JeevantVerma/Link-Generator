@@ -6,7 +6,7 @@ import { setIsFetching, loginSuccess, loginFailure } from './Redux/Slice/userSli
 import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -19,11 +19,14 @@ const LoginPage = () => {
       method: 'GET',
       maxBodyLength: Infinity,
       url: 'http://localhost:4000/login',
-      params: {
-        username: username,
-        password: password,
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin":
+          "https://generate.mlsctiet.com, http://localhost:5173",
+        "email" : email,
+        "password" : password 
       },
-      // withCredentials: true,
+      withCredentials: true,
     };
 
     try {
@@ -32,7 +35,7 @@ const LoginPage = () => {
       if (response.status === 200) {
         console.log('Login success');
         const redirectUrl = response.data.redirectUrl;
-        dispatch(loginSuccess({"username":username}));
+        dispatch(loginSuccess({"email":email}));
 
         if (redirectUrl) {
           console.log('redirect');
@@ -77,11 +80,11 @@ const LoginPage = () => {
 
         <Grid item xs={12} sx={{ pt: { xs: 32, md: 16 }, pl: 16 }}>
           <TextField
-            label="Enter your Username"
+            label="Enter your Email"
             variant="outlined"
             fullWidth
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
         </Grid>
