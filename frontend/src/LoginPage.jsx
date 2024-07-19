@@ -10,8 +10,17 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [error, setError] = useState('');
 
   const handleLogin = async (e) => {
+    
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    if (!emailRegex.test(email)) {
+    setError("Invalid email address");
+    return;
+    }
+    setError("");
     
     dispatch(setIsFetching());
     const config = {
@@ -22,7 +31,7 @@ const LoginPage = () => {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin":
           "https://generate.mlsctiet.com, http://localhost:5173",
-        "email" : email,
+        "email" : email.toLowerCase(),
         "password" : password 
       },
       withCredentials: true,
@@ -86,6 +95,8 @@ const LoginPage = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            error={!!error}
+            helperText={error}
           />
         </Grid>
 
@@ -95,6 +106,7 @@ const LoginPage = () => {
             variant="outlined"
             fullWidth
             value={password}
+            type="password"
             required
             onChange={(e) => setPassword(e.target.value)}
           />
