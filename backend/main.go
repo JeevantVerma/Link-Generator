@@ -6,14 +6,18 @@ import (
 	"net/http"
 	"os"
 
+	"database/sql"
+
 	admin "github.com/MicrosoftStudentChapter/Link-Generator/pkg/admin"
 	auth "github.com/MicrosoftStudentChapter/Link-Generator/pkg/auth"
 	router "github.com/MicrosoftStudentChapter/Link-Generator/pkg/router"
 	"github.com/gorilla/mux"
+	"github.com/labstack/gommon/log"
 	"github.com/redis/go-redis/v9"
 )
 
 func main() {
+	var db *sql.DB
 	redisAddr := os.Getenv("REDIS_ADDR")
 	if redisAddr == "" {
 		redisAddr = ":6379"
@@ -30,6 +34,27 @@ func main() {
 		panic(err)
 	}
 	fmt.Println("Redis [PING]: ", res)
+
+	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=require",
+		os.Getenv("SQL_HOST"),
+		os.Getenv("SQL_PORT"),
+		os.Getenv("SQL_USER"),
+		os.Getenv("SQL_PASSWORD"),
+		os.Getenv("SQL_DATABASE_NAME"))
+
+	db, err = sql.Open("postgres", connStr)
+
+	if err != nil {
+		log.Fatalf("Error opening database: %v", err)
+	}
+
+	err = db.Ping()
+	if err != nil {
+		log.Fatalf("Error connecting to the database: %v", err)
+	}
+
+	admin.SetDBConnection(db)
+	auth.SetDBConnection(db)
 
 	r := mux.NewRouter()
 

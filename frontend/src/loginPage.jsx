@@ -14,7 +14,6 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     
     dispatch(setIsFetching());
-    console.log("hello")
     const config = {
       method: 'GET',
       maxBodyLength: Infinity,
@@ -47,6 +46,7 @@ const LoginPage = () => {
       } else {
         dispatch(loginFailure());
         console.log('Login failed');
+        console.log(e);
       }
     } catch (error) {
       dispatch(loginFailure());

@@ -11,10 +11,12 @@ services:
       - SQL_USER=${SQL_USER}
       - SQL_PASSWORD=${SQL_PASSWORD}
       - SQL_DATABASE_NAME=${SQL_DATABASE_NAME}
+      - SQL_HOST=${SQL_HOST}
+      - SQL_PORT=${SQL_PORT}
       - REDIS_ADDR=redis-server:6379
     depends_on:
       - redis
-      - db
+      # - db
     networks:
       - web
 
@@ -30,18 +32,18 @@ services:
     networks:
       - web
 
-  db:
-    container_name: postgres-db
-    image: postgres:latest
-    restart: always
-    environment:
-      POSTGRES_USER: ${SQL_USER}
-      POSTGRES_PASSWORD: ${SQL_PASSWORD}
-      POSTGRES_DB: ${SQL_DATABASE_NAME}
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    networks:
-      - web
+  # db:
+  #   container_name: postgres-db
+  #   image: postgres:latest
+  #   restart: always
+  #   environment:
+  #     POSTGRES_USER: ${SQL_USER}
+  #     POSTGRES_PASSWORD: ${SQL_PASSWORD}
+  #     POSTGRES_DB: ${SQL_DATABASE_NAME}
+  #   volumes:
+  #     - pgdata:/var/lib/postgresql/data
+  #   networks:
+  #     - web
 
 networks:
   web:
@@ -50,5 +52,5 @@ networks:
 volumes:
   redis-data:
     name: redis-data
-  pgdata:
-    name: pgdata
+  # pgdata:
+  #   name: pgdata

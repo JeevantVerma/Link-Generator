@@ -13,7 +13,6 @@ import (
 	"github.com/labstack/gommon/log"
 
 	"github.com/golang-jwt/jwt"
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -37,27 +36,8 @@ type Claims struct {
 	jwt.StandardClaims
 }
 
-func init() {
-	envErr := godotenv.Load()
-	if envErr != nil {
-		log.Fatal("Error loading .env file")
-	}
-
-	connStr := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable",
-		os.Getenv("SQL_USER"),
-		os.Getenv("SQL_PASSWORD"),
-		os.Getenv("SQL_DATABASE_NAME"))
-
-	var err error
-	db, err = sql.Open("postgres", connStr)
-	if err != nil {
-		log.Fatalf("Error opening database: %v", err)
-	}
-
-	err = db.Ping()
-	if err != nil {
-		log.Fatalf("Error connecting to the database: %v", err)
-	}
+func SetDBConnection(dbSql *sql.DB) {
+	db = dbSql
 }
 
 func GenerateTokenAndSetCookies(w http.ResponseWriter, r *http.Request, email string) string {
@@ -143,7 +123,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	_, err = ValidateJWT(tokenString)
 	if err != nil {
 		w.WriteHeader(http.StatusForbidden)
-		json.NewEncoder(w).Encode(Response{Status: "fail", Message: err.Error(), RedirectUrl: "http://localhost:5173/error"})
+		json.NewEncoder(w).Encode(Response{Status: "fail", Message: err.Error(), RedirectUrl: "/error"})
 		return
 	}
 
