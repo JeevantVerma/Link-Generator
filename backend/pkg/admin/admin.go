@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"time"
 
 	_ "github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
@@ -16,11 +17,10 @@ import (
 type admindetail struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
+	JoinDate string `json:"joinDate"`
 }
 
 var db *sql.DB
-
-// var conn string
 
 func SetDBConnection(dbSql *sql.DB) {
 	db = dbSql
@@ -45,9 +45,14 @@ func AddAdmin(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
-	query := `INSERT INTO admin (email, password) VALUES ($1, $2)`
+	query := `INSERT INTO admin (email, password, joinDate) VALUES ($1, $2, $3)`
 	password, _ := bcrypt.GenerateFromPassword([]byte(req.Password), 8)
-	_, err = db.ExecContext(ctx, query, req.Email, password)
+
+	currentTime := time.Now()
+	joinDate := time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 0, 0, 0, 0, currentTime.Location())
+	joinDateString := joinDate.Format("2006-01-02")
+
+	_, err = db.ExecContext(ctx, query, req.Email, password, joinDateString)
 	if err != nil {
 		log.Printf("Error executing query: %v", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -61,7 +66,8 @@ func AddAdmin(w http.ResponseWriter, r *http.Request) {
 
 func GetAllAdmins(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
-	query := `SELECT email FROM admin`
+
+	query := `SELECT email, joinDate FROM admin`
 
 	rows, err := db.QueryContext(ctx, query)
 	if err != nil {
@@ -74,11 +80,16 @@ func GetAllAdmins(w http.ResponseWriter, r *http.Request) {
 	var admins []admindetail
 	for rows.Next() {
 		var admin admindetail
-		if err := rows.Scan(&admin.Email); err != nil {
+		var joinDate time.Time
+    
+		if err := rows.Scan(&admin.Email, &joinDate); err != nil {
 			log.Printf("Error scanning row: %v", err)
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
+
+		admin.JoinDate = joinDate.Format("02-01-2006")
+
 		admins = append(admins, admin)
 	}
 	if err := rows.Err(); err != nil {
