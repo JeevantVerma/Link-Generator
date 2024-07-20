@@ -29,23 +29,25 @@ const Adminpage = () => {
     setActiveComponent(newComponent);
   };
   const addAdmin = async () => {
-    
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
+  
     if (!emailRegex.test(email)) {
-    setError("Invalid email address");
-    return;
+      setError("Invalid email address");
+      setSnackbarOpen(true);
+      return;
     }
+  
     setError("");
-
+  
     const raw = JSON.stringify({
       email: email.toLowerCase(),
       password: password,
     });
+  
     const config = {
       method: "POST",
       maxBodyLength: Infinity,
-      url: `http://localhost:4000/add-admin`,
+      url: "http://localhost:4000/add-admin",
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin":
@@ -53,21 +55,22 @@ const Adminpage = () => {
       },
       data: raw,
     };
-    const response = await axios.request(config);
-    console.log(response.status);
-     // show the response from the backend with this
-    if (response.status == 200) {
-      console.log(raw);
-      handleClose();
-      setSnackbarOpen(true);
-    } else {
-      console.log(raw);
-      console.log(response.data.message);
-      console.log(error);
+  
+    try {
+      const response = await axios.request(config);
+      if (response.status === 200) {
+        console.log(raw);
+        handleClose();
+        setEmail('');
+        setPassword('');
+        setSnackbarOpen(true);
+      }
+    } catch (error) {
+      console.error(error);
+      setError(error.response?.data?.message || "An error occurred while adding the admin");
       setSnackbarOpen(true);
     }
   };
-
   const handleOpen = () => {
     setOpen(true);
   };
@@ -77,6 +80,7 @@ const Adminpage = () => {
   };
 
   return (
+    <>
     <Grid sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
       <Grid sx={{ display: "flex", flexDirection: "row", alignItems: "center", mb: 2, gap: 10 }}>
         <Typography variant="h4" align="center" color="white">
@@ -118,17 +122,6 @@ const Adminpage = () => {
             <DialogActions>
               <Button onClick={handleClose}>Cancel</Button>
               <Button onClick={addAdmin} >Add</Button>
-              <Snackbar 
-                open={snackbarOpen}
-                autoHideDuration={3000}
-                onClose={() => setSnackbarOpen(false)}>
-                <Alert
-                  onClose={() => setSnackbarOpen(false)}
-                  severity="error"
-                  sx={{ width: '100%' }}>
-                  Email or password is invalid
-                </Alert>
-              </Snackbar>
             </DialogActions>
           </Dialog>
         </Grid>
@@ -182,7 +175,30 @@ const Adminpage = () => {
         </Grid>
       </Grid>
     </Grid>
-
+    <Snackbar 
+    open={snackbarOpen}
+    autoHideDuration={3000}
+    onClose={() => setSnackbarOpen(false)}
+    >
+    {error ? (
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity="error"
+          sx={{ width: '100%' }}
+        >
+          {error}
+        </Alert>
+      ) : (
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity="success"
+          sx={{ width: '100%' }}
+        >
+          Admin added successfully
+        </Alert>
+      )}
+    </Snackbar>
+  </>
   );
 };
 

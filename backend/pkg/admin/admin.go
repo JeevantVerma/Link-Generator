@@ -66,6 +66,7 @@ func AddAdmin(w http.ResponseWriter, r *http.Request) {
 
 func GetAllAdmins(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
+
 	query := `SELECT email, joinDate FROM admin`
 
 	rows, err := db.QueryContext(ctx, query)
@@ -80,12 +81,15 @@ func GetAllAdmins(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		var admin admindetail
 		var joinDate time.Time
+    
 		if err := rows.Scan(&admin.Email, &joinDate); err != nil {
 			log.Printf("Error scanning row: %v", err)
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
+
 		admin.JoinDate = joinDate.Format("02-01-2006")
+
 		admins = append(admins, admin)
 	}
 	if err := rows.Err(); err != nil {

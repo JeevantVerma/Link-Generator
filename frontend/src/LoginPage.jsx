@@ -32,7 +32,7 @@ const LoginPage = () => {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin":
           "https://generate.mlsctiet.com, http://localhost:5173",
-        "email" : email,
+        "email" : email.toLowerCase(),
         "password" : password 
       },
       withCredentials: true,
@@ -99,6 +99,8 @@ const LoginPage = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            error={!!error}
+            helperText={error}
           />
         </Grid>
 
@@ -109,6 +111,7 @@ const LoginPage = () => {
             fullWidth
             type='password'
             value={password}
+            type="password"
             required
             onChange={(e) => setPassword(e.target.value)}
           />
