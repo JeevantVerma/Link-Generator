@@ -8,20 +8,23 @@ import {
   List,
   ListItem,
   ListItemText,
-  Dialog,DialogActions,DialogContent,DialogContentText,DialogTitle
+  Dialog,DialogActions,DialogContent,DialogContentText,DialogTitle,
+  Snackbar,
+  Alert
 } from "@mui/material";
 import Administrators from "./Adminpagecomponents/Administrators";
 import Approvals from "./Adminpagecomponents/Approvals";
 import axios from 'axios';
-import Users from "./Adminpagecomponents/Users";
+// import Users from "./Adminpagecomponents/Users";
 import { combineReducers } from "redux";
 
 const Adminpage = () => {
-  const [activeComponent, setActiveComponent] = useState("Users");
+  const [activeComponent, setActiveComponent] = useState("Approvals");
   const [error, setError] = useState("");
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [snackbarOpen, setSnackbarOpen] = useState();
   const handleLinkClick = (newComponent) => {
     setActiveComponent(newComponent);
   };
@@ -56,10 +59,12 @@ const Adminpage = () => {
     if (response.status == 200) {
       console.log(raw);
       handleClose();
+      setSnackbarOpen(true);
     } else {
       console.log(raw);
       console.log(response.data.message);
       console.log(error);
+      setSnackbarOpen(true);
     }
   };
 
@@ -90,7 +95,7 @@ const Adminpage = () => {
               <TextField
                 autoFocus
                 margin="dense"
-                id="name"
+                id="email"
                 label="Email Address"
                 type="email"
                 fullWidth
@@ -101,7 +106,7 @@ const Adminpage = () => {
               <TextField
                 autoFocus
                 margin="dense"
-                id="name"
+                id="password"
                 label="Password"
                 type="password"
                 fullWidth
@@ -113,6 +118,17 @@ const Adminpage = () => {
             <DialogActions>
               <Button onClick={handleClose}>Cancel</Button>
               <Button onClick={addAdmin} >Add</Button>
+              <Snackbar 
+                open={snackbarOpen}
+                autoHideDuration={3000}
+                onClose={() => setSnackbarOpen(false)}>
+                <Alert
+                  onClose={() => setSnackbarOpen(false)}
+                  severity="error"
+                  sx={{ width: '100%' }}>
+                  Email or password is invalid
+                </Alert>
+              </Snackbar>
             </DialogActions>
           </Dialog>
         </Grid>
@@ -136,9 +152,9 @@ const Adminpage = () => {
             </Typography>
           </Grid>
           <List>
-            <ListItem button onClick={() => handleLinkClick("Users")}>
+            {/* <ListItem button onClick={() => handleLinkClick("Users")}>
               <ListItemText primary="Users" />
-            </ListItem>
+            </ListItem> */}
             <ListItem button onClick={() => handleLinkClick("Administrators")}>
               <ListItemText primary="Administrators" />
             </ListItem>
@@ -160,9 +176,9 @@ const Adminpage = () => {
           m: 2,
           borderRadius: 5,
         }}>
-          {activeComponent === "Users" && <Users />}
-          {activeComponent === "Administrators" && <Administrators />}
+          {/* {activeComponent === "Users" && <Users />} */}
           {activeComponent === "Approvals" && <Approvals />}
+          {activeComponent === "Administrators" && <Administrators />}
         </Grid>
       </Grid>
     </Grid>
