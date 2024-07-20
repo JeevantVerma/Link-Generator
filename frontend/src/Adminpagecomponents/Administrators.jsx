@@ -39,7 +39,11 @@ const Administrators = () => {
   }, []);
 
   useEffect(() => {
-    setRows(adminJSON);
+    setRows(adminJSON.map((admin, index) => ({
+      id: index, 
+      email: admin.email,
+      date: admin.joinDate,
+    })));
   }, [adminJSON]);
 
   const columns = [
@@ -70,7 +74,6 @@ const Administrators = () => {
       disableColumnMenu: true,
       renderCell: (params) => {
         const handleClick = () => {
-          // Logic to remove from database
           console.log('Remove admin with ID:', params.row.id);
         };
 
@@ -90,7 +93,7 @@ const Administrators = () => {
       rows={rows}
       columns={columns}
       disableColumnSelector={true}
-      getRowId={(row) => row.email}
+      getRowId={(row) => row.id}
     />
   );
 };

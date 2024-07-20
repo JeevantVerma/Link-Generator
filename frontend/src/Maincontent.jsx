@@ -78,7 +78,6 @@ const MainContentSection = () => {
       data: raw,
     };
     
-    console.log("wommlk");
     const response = await axios.request(config);
     console.log(response.status);
      // show the response from the backend with this
