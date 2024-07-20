@@ -81,7 +81,7 @@ func GetAllAdmins(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		var admin admindetail
 		var joinDate time.Time
-    
+
 		if err := rows.Scan(&admin.Email, &joinDate); err != nil {
 			log.Printf("Error scanning row: %v", err)
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -105,4 +105,47 @@ func GetAllAdmins(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
+}
+
+func RemoveAdmin(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Background()
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "Unable to read request body", http.StatusBadRequest)
+		return
+	}
+	defer r.Body.Close()
+
+	var req struct {
+		Email string `json:"email"`
+	}
+	err = json.Unmarshal(body, &req)
+	if err != nil {
+		http.Error(w, "Invalid JSON format", http.StatusBadRequest)
+		return
+	}
+
+	query := `DELETE FROM admin WHERE email = $1`
+
+	result, err := db.ExecContext(ctx, query, req.Email)
+	if err != nil {
+		log.Printf("Error executing query: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		log.Printf("Error getting rows affected: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	if rowsAffected == 0 {
+		http.Error(w, "Admin not found", http.StatusNotFound)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Admin Removed"))
 }

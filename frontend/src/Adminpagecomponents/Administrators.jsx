@@ -1,17 +1,19 @@
 import { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Grid, Avatar, Button } from '@mui/material';
+import { Grid, Avatar, Button, Snackbar, Alert } from '@mui/material';
 import axios from 'axios';
 
 const Administrators = () => {
   const [adminJSON, setAdminJSON] = useState([]);
   const [rows, setRows] = useState([]);
+  const [error, setError] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const getAdminDataJSON = async () => {
     const config = {
       method: 'GET',
       maxBodyLength: Infinity,
-      url: 'http://localhost:4000/get-admin',
+      url: 'http://localhost:4000/admin',
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "https://generate.mlsctiet.com, http://localhost:5173",
@@ -21,16 +23,43 @@ const Administrators = () => {
 
     try {
       const response = await axios.request(config);
-      console.log(response.data);
       if (response.status === 200) {
-        console.log('Data Fetched Successfully');
         setAdminJSON(response.data);
+        setError(""); // Clear any previous error messages
       } else {
-        console.log('Error in Fetching Details');
+        setError('Error in Fetching Details');
       }
     } catch (error) {
-      console.error('Error during Fetching Data:', error.message);
-      console.error('Full error:', error);
+      setError('Error during Fetching Data: ' + error.message);
+    }
+  };
+
+  const removeAdmin = async (email) => {
+    const config = {
+      method: 'DELETE',
+      maxBodyLength: Infinity,
+      url: 'http://localhost:4000/admin',
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "https://generate.mlsctiet.com, http://localhost:5173",
+      },
+      data: {
+        "email": email.toLowerCase()
+      },
+      withCredentials: true,
+    };
+
+    try {
+      const response = await axios.request(config);
+      if (response.status === 200) {
+        setError(""); 
+        setSnackbarOpen(true);
+      } else {
+        setError('Error in deleting admin');
+      }
+    } catch (error) {
+      setError('Error during Deleting admin: ' + error.message);
+      setSnackbarOpen(true);
     }
   };
 
@@ -40,7 +69,7 @@ const Administrators = () => {
 
   useEffect(() => {
     setRows(adminJSON.map((admin, index) => ({
-      id: index, 
+      id: index,
       email: admin.email,
       date: admin.joinDate,
     })));
@@ -74,7 +103,7 @@ const Administrators = () => {
       disableColumnMenu: true,
       renderCell: (params) => {
         const handleClick = () => {
-          console.log('Remove admin with ID:', params.row.id);
+          removeAdmin(params.row.email);
         };
 
         return (
@@ -89,12 +118,27 @@ const Administrators = () => {
   ];
 
   return (
-    <DataGrid
-      rows={rows}
-      columns={columns}
-      disableColumnSelector={true}
-      getRowId={(row) => row.id}
-    />
+    <>
+      <DataGrid
+        rows={rows}
+        columns={columns}
+        disableColumnSelector={true}
+        getRowId={(row) => row.id}
+      />
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarOpen(false)}
+      >
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity={error ? 'error' : 'success'}
+          sx={{ width: '100%' }}
+        >
+          {error || 'Admin removed successfully'}
+        </Alert>
+      </Snackbar>
+    </>
   );
 };
 
