@@ -66,8 +66,9 @@ func main() {
 		w.Write([]byte("Service is Alive"))
 	}).Methods(http.MethodOptions, http.MethodGet)
 	r.HandleFunc("/add-link", router.AddLink).Methods(http.MethodOptions, http.MethodPost)
-	r.HandleFunc("/add-admin", admin.AddAdmin).Methods(http.MethodOptions, http.MethodPost)
-	r.HandleFunc("/get-admin", admin.GetAllAdmins).Methods(http.MethodOptions, http.MethodGet)
+	r.HandleFunc("/admin", admin.AddAdmin).Methods(http.MethodOptions, http.MethodPost)
+	r.HandleFunc("/admin", admin.RemoveAdmin).Methods(http.MethodOptions, http.MethodDelete)
+	r.HandleFunc("/admin", admin.GetAllAdmins).Methods(http.MethodOptions, http.MethodGet)
 	r.HandleFunc("/{link}", router.HandleRouting).Methods(http.MethodOptions, http.MethodGet)
 
 	// Middlewares
@@ -84,7 +85,7 @@ func HandlePreflight(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Origin, email, password")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, DELETE")
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
 
 		if r.Method == http.MethodOptions {

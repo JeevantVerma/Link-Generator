@@ -47,7 +47,7 @@ const Adminpage = () => {
     const config = {
       method: "POST",
       maxBodyLength: Infinity,
-      url: "http://localhost:4000/add-admin",
+      url: "http://localhost:4000/admin",
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin":
