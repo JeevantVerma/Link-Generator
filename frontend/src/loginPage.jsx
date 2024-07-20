@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Grid, Container, Typography, TextField, Button } from '@mui/material';
+import { Grid, Container, Typography, TextField, Button, Snackbar, Alert } from '@mui/material';
 import axios from 'axios';
 import { setIsFetching, loginSuccess, loginFailure } from './Redux/Slice/userSlice'; // import the actions
 import { useNavigate } from 'react-router-dom';
@@ -8,10 +8,20 @@ import { useNavigate } from 'react-router-dom';
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [snackbarOpen, setSnackbarOpen] = useState('');
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [error, setError] = useState('');
 
   const handleLogin = async (e) => {
+    
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    if (!emailRegex.test(email)) {
+    setError("Invalid email address");
+    return;
+    }
+    setError("");
     
     dispatch(setIsFetching());
     const config = {
@@ -47,11 +57,13 @@ const LoginPage = () => {
         dispatch(loginFailure());
         console.log('Login failed');
         console.log(e);
+        setSnackbarOpen(true);
       }
     } catch (error) {
       dispatch(loginFailure());
       console.error('Error during login:', error.message);
       console.error('Full error:', error);
+      setSnackbarOpen(true);
     }
   };
 
@@ -83,6 +95,7 @@ const LoginPage = () => {
             label="Enter your Email"
             variant="outlined"
             fullWidth
+            type='email'
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -94,6 +107,7 @@ const LoginPage = () => {
             label="Enter your password"
             variant="outlined"
             fullWidth
+            type='password'
             value={password}
             required
             onChange={(e) => setPassword(e.target.value)}
@@ -112,6 +126,17 @@ const LoginPage = () => {
             Login
           </Button>
         </Grid>
+        <Snackbar 
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarOpen(false)}>
+          <Alert
+            onClose={() => setSnackbarOpen(false)}
+            severity="error"
+            sx={{ width: '100%' }}>
+            Email or password is invalid
+          </Alert>
+        </Snackbar>
       </Grid>
     </Container>
   );
